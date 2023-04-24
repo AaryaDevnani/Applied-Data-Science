@@ -6,7 +6,13 @@ df = pd.read_csv("filename")
 # For Numeric Columns Only
 df_numerics_only = df.select_dtypes(include=np.number)
 ```
+```python
+# Load CSV from SciKitLearn
+from sklearn import datasets
 
+iris = datasets.load_iris()
+df1 = pd.DataFrame(data=np.c_[iris['data'], iris['target']], columns=iris['feature_names'] + ['target'])
+```
 ## Exp 1: Descriptive Statistics
 ```python
 
