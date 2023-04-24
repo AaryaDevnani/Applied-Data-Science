@@ -349,7 +349,7 @@ cr = classification_report(y_oversample,pred) # This is smote Classification Rep
 cr = classification_report(y_test,pred) # This is without SMOTE classification Report
 ```
 
-# Exp 9: Inferential Statistics
+## Exp 9: Inferential Statistics
 
 ```python
 import pandas as pd
