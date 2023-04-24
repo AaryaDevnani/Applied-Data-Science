@@ -1,5 +1,26 @@
 # CheatSheet for ADS
 
+## Libraries for each plot
+1. Matplotlib:
+    * Scatter plot
+    * Pie Chart
+
+2. Pandas
+    * Scatter Matrix
+    * Box Plot
+    * Histogram
+    * Density Chart
+    * Andrews Curve
+
+3. Seaborn
+    * Distplot / Histplot
+    * Joint Plot
+
+4. Plotly
+    * Line Chart
+    * Bubble Chart
+    * Parallel Chart
+
 ```python
 # Read CSV
 df = pd.read_csv("filename")
@@ -214,4 +235,174 @@ corr = df_numeric_corr
 hm = sns.heatmap(corr, cmap="Blues", annot=True)
 plt.show()
 
+```
+## Exp 4: Supervised Models Performance Metrics
+```python
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import train_test_split
+
+y = df['column_name'] # Dependent Variable
+x = df[['column_name1','column_name2',...]] #Independent Variables
+X_train, X_test, y_train, y_test = train_test_split(x,y,test_size=0.67)
+
+dt = DecisionTreeClassifier()
+model = dt.fit(X_train, y_train)
+y_pred = dt.predict(X_test)
+
+print(classification_report(y_test, y_pred, target_names=["Prediction 1", "Prediction 2"]))
+
+cm = confusion_matrix(y_test,y_pred)
+cmDisply = ConfusionMatrixDisplay(cm)
+cmDisply.plot()
+plt.show()
+
+```
+## Exp 5: Unsupervised Models Performance Metrics
+```python
+
+#K Means
+from sklearn.cluster import KMeans
+n_clusters = 2
+kmeans = KMeans(n_clusters=n_clusters)
+kmeans.fit(df)
+labels = kmeans.labels_
+centroids = kmeans.cluster_centers_
+
+# Adjusted Rand Score
+from sklearn.metrics.cluster import adjusted_rand_score
+labels_true = target.values
+labels_pred = labels
+print(adjusted_rand_score(labels_true, labels_pred))
+
+# Mutual Info Score
+from sklearn.metrics import mutual_info_score
+print(mutual_info_score (labels_true, labels_pred))
+
+# Silhoutte Score
+from sklearn.metrics import silhouette_score
+print(silhouette_score(df, labels))
+
+```
+## Exp 6: Skip
+
+## Exp 7: Outlier Detection
+```python
+
+#DBSCAN
+from sklearn.cluster import DBSCAN
+
+scaler = StandardScaler()
+X = scaler.fit_transform(df)
+dbs = DBSCAN(eps=12.5, min_samples=4)
+model = dbs.fit(X)
+dbscanDs = df.copy()
+dbscanDs['Cluster'] = model.labels_ 
+# Identify outliers based on their cluster label (-1 indicates an outlier)
+outliers = df[dbs.labels_ == -1]
+print(outliers.count())
+dbscanDs.Cluster.value_counts()
+
+#KNN
+from sklearn.neighbors import NearestNeighbors
+k = 5
+# Fit the KNN model on the High, Low, Open, Close, and Adj Close columns
+X = df[['fare_amount', 'distance']]
+nbrs = NearestNeighbors(n_neighbors=k+1, algorithm='ball_tree').fit(X)
+distances, indices = nbrs.kneighbors(X)
+# Calculate the average distance to the k nearest neighbors for each data point
+avg_distances = distances[:,1:].mean(axis=1)
+# Set a threshold for outlier detection (e.g. 2 standard deviations above the mean)
+threshold = avg_distances.mean() + 2 * avg_distances.std()
+# Identify outliers based on the threshold
+outliers = df[avg_distances > threshold]
+# Print the outliers count
+print(outliers.count())
+```
+
+## Exp 8: SMOTE
+```python
+import numpy as np 
+import pandas as pd
+from imblearn.over_sampling import SMOTE
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+x = data[['fare_amount','passenger_count']]
+y = data['distance']
+
+X_train, X_test, y_train, y_test = train_test_split(x, y,test_size= 0.7, random_state=25)
+
+smote = SMOTE(random_state=25,k_neighbors=1)
+X_oversample, y_oversample = smote.fit_resample(X_train, y_train)
+
+lr =LogisticRegression()
+modelOversampled = LogisticRegression.fit(X_oversample,y_oversample)
+model = LogisticRegression.fit(X_train,y_train)
+predOversampled = modelOversampled.pred(X_test)
+pred = model.pred(X_test)
+cr = classification_report(y_oversample,pred) # This is smote Classification Report
+cr = classification_report(y_test,pred) # This is without SMOTE classification Report
+```
+
+# Exp 9: Inferential Statistics
+
+```python
+import pandas as pd
+import numpy as np
+import scipy.stats as stats
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+from scipy.stats import ttest_ind, ttest_1samp, f_oneway
+from statsmodels.stats.weightstats import ztest
+
+# Z-test
+sample_mean = df['fare_amount'].mean()
+pop_mean =  7 # assumed population mean
+sample_std = df['fare_amount'].std()
+n = len(df)
+z_score = (sample_mean - pop_mean) / (sample_std / np.sqrt(n))
+p_value = stats.norm.sf(abs(z_score)) * 2  # two-tailed test
+print('Z-score:', z_score)
+print('P-value:', p_value)
+
+# T-test
+sample_mean = df['fare_amount'].mean()
+pop_mean = 7  # assumed population mean
+sample_std = df['fare_amount'].std()
+n = len(df)
+t_score, p_value = stats.ttest_1samp(df['fare_amount'], pop_mean)
+print('T-score:', t_score)
+print('P-value:', p_value)
+
+model = ols('fare_amount ~ C(passenger_count)', data=df).fit()
+anova_table = sm.stats.anova_lm(model, typ=2)
+print(anova_table)
+
+# 1 Sample T-Test
+t_stat, p_value = ttest_1samp(df['fare_amount'], 7)
+print("1-sample t-test results:")
+print("t-statistic: ", t_stat)
+print("p-value: ", p_value)
+
+# 2 Sample T-Test
+sample1 = df[df['passenger_count'] == 5]['fare_amount']
+sample2 = df[df['passenger_count'] == 6]['fare_amount']
+t_stat, p_value = ttest_ind(sample1, sample2)
+print("2-sample t-test results:")
+print("t-statistic: ", t_stat)
+print("p-value: ", p_value)
+
+# ANOVA
+group1 = df[df['passenger_count'] == 1]['fare_amount']
+group2 = df[df['passenger_count'] == 2]['fare_amount']
+group3 = df[df['passenger_count'] == 3]['fare_amount']
+f_stat, p_value = f_oneway(group1, group2, group3)
+print("ANOVA results:")
+print("f-statistic: ", f_stat)
+print("p-value: ", p_value)
 ```
