@@ -57,7 +57,7 @@ for i in range(len(df.column_name)):
 print(ssColumn)
 
 # Box and Whisker plot
-df.boxplot('column1', 'column2')
+df.boxplot('column1')
 
 # Scatter Plot
 plt.scatter(df.column1, df.column2)
