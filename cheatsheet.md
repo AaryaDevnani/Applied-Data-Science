@@ -7,7 +7,7 @@ df = pd.read_csv("filename")
 df_numerics_only = df.select_dtypes(include=np.number)
 ```
 ```python
-# Load CSV from SciKitLearn
+# Load Dataset directly from SciKitLearn
 from sklearn import datasets
 
 iris = datasets.load_iris()
