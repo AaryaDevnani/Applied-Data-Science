@@ -196,7 +196,9 @@ x.plot()
 plt.show()
 
 # Heatmap
-hm = sns.heatmap(data = data)
+df_numeric = df.select_dtypes(include=np.number)
+corr = df_numeric_corr
+hm = sns.heatmap(corr, cmap="Blues", annot=True)
 plt.show()
 
 ```
