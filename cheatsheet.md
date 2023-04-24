@@ -180,6 +180,10 @@ plt.pie(df.coumn_name.value_counts(),labels=df.column_name.unique(),autopct ='% 
 plt.pie(values,labels=lst)
 plt.show()
 
+#Line Chart
+fig = px.line(df1, x="distance_range", y="fare_amount",color='passenger_count')
+fig.show()
+
 #Bubble Chart
 fig = px.scatter(df, x="distance_range", y="fare_amount", size="distance",color="passenger_count",  log_x=True, size_max=60)
 fig.show()
