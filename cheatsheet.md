@@ -196,7 +196,7 @@ x.plot()
 plt.show()
 
 # Heatmap
-hm = sn.heatmap(data = data)
+hm = sns.heatmap(data = data)
 plt.show()
 
 ```
