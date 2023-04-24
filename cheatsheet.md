@@ -3,6 +3,8 @@
 ```python
 # Read CSV
 df = pd.read_csv("filename")
+# For Numeric Columns Only
+df_numerics_only = df.select_dtypes(include=np.number)
 ```
 
 ## Exp 1: Descriptive Statistics
