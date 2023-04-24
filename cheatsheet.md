@@ -176,6 +176,7 @@ df['passenger_count'].hist()
 plt.show()
 
 #Pie Chart
+plt.pie(df.coumn_name.value_counts(),labels=df.column_name.unique(),autopct ='% 1.1f %%')
 plt.pie(values,labels=lst)
 plt.show()
 
